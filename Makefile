@@ -1,5 +1,3 @@
 clean:
-	rm *.pyc
-
-serve:
-	python app.py
+	rm freq_api/*.pyc
+	rm freq_api/static/db/freq.db
