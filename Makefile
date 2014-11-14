@@ -3,3 +3,6 @@ clean:
 cleandb:
 	rm app.db
 	rm -rf db_repository/  
+createdb:
+	./db_create.py
+	./db_migrate.py
