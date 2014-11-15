@@ -10,4 +10,3 @@ from freq_api import models
 
 manager = flask.ext.restless.APIManager(app, flask_sqlalchemy_db=db)
 manager.create_api(models.Freq, methods=['GET'], max_results_per_page=100)
-
