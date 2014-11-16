@@ -2,6 +2,7 @@
 import time
 import sqlite3
 import sys
+import gzip
 from freq_api import db,models
 
 t0 = time.time()
@@ -9,7 +10,7 @@ t0 = time.time()
 data_file = sys.argv[1]
 dataset = sys.argv[2]
 
-reader = open(data_file)
+reader = gzip.open(data_file)
 reader.readline()
 
 conn = sqlite3.connect('freq_api/static/app.db')

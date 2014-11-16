@@ -3,6 +3,9 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext import restful
 from flask.ext.restful import reqparse
 from flask.ext.restful.utils import cors
+from sqlalchemy.sql.expression import func, select
+from freq_api import utils
+import random
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -16,6 +19,7 @@ parser = reqparse.RequestParser()
 parser.add_argument('chr',type=int)
 parser.add_argument('pos',type=int)
 parser.add_argument('rsID',type=str)
+parser.add_argument('random', type=bool)
 
 @app.route('/')
 def index():
@@ -37,6 +41,7 @@ class Freq(restful.Resource):
                 data.append({'chr':res.chr, 'pos':res.pos, 'snp':res.snp, 'rsID':rsID, 'clst':res.clst,
                              'dataset':res.dataset, 'ma':res.ma, 'maja':res.maja, 'maf':res.maf, 'mac':res.mac,
                              'nobs':res.nobs})
+            data = utils.define_freqscale(data)
             return data
         elif args['rsID']:
             data = []
@@ -49,6 +54,24 @@ class Freq(restful.Resource):
                 data.append({'chr':res.chr, 'pos':res.pos, 'snp':res.snp, 'rsID':rsID, 'clst':res.clst,
                              'dataset':res.dataset, 'ma':res.ma, 'maja':res.maja, 'maf':res.maf, 'mac':res.mac,
                              'nobs':res.nobs})
+            data = utils.define_freqscale(data)
+            return data
+        elif args['random']==True:
+            data = []
+            row_count = int(models.Freq.query.count())
+            random_row = models.Freq.query.offset(int(row_count*random.random())).first()
+            chr = random_row.chr
+            pos = random_row.pos
+            freq_response = models.Freq.query.filter_by(chr=chr, pos=pos)
+            rsID_response = models.rsID.query.filter_by(snp=str(chr)+':'+str(pos))
+            rsID = rsID_response.first()
+            if rsID != None:
+                rsID = rsID.rsID
+            for res in freq_response:
+                data.append({'chr':res.chr, 'pos':res.pos, 'snp':res.snp, 'rsID':rsID, 'clst':res.clst,
+                             'dataset':res.dataset, 'minAllele':res.ma, 'majAllele':res.maja, 'maf':res.maf, 'mac':res.mac,
+                             'nobs':res.nobs})
+            data = utils.define_freqscale(data)
             return data
         else:
             return 403
