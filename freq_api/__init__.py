@@ -29,25 +29,26 @@ class Freq(restful.Resource):
         if args['chr'] and args['pos']:
             data = []
             freq_response = models.Freq.query.filter_by(chr=args['chr'], pos=args['pos'])
-            rsID_response = models.rsID.query.filter_by(chr_pos=str(args['chr'])+':'+str(args['pos']))
+            rsID_response = models.rsID.query.filter_by(snp=str(args['chr'])+':'+str(args['pos']))
             rsID = rsID_response.first()
             if rsID != None:
                 rsID = rsID.rsID
             for res in freq_response:
                 data.append({'chr':res.chr, 'pos':res.pos, 'snp':res.snp, 'rsID':rsID, 'clst':res.clst,
-                             'ma':res.ma, 'maja':res.maja, 'maf':res.maf, 'mac':res.mac, 'nobs':res.nobs})
+                             'dataset':res.dataset, 'ma':res.ma, 'maja':res.maja, 'maf':res.maf, 'mac':res.mac,
+                             'nobs':res.nobs})
             return data
         elif args['rsID']:
             data = []
             rsID_response = models.rsID.query.filter_by(rsID=args['rsID'])
             rsID = rsID_response.first()
-            print rsID
-            snp = rsID.chr_pos
+            snp = rsID.snp
             rsID = rsID.rsID
             freq_response = models.Freq.query.filter_by(snp=snp)
             for res in freq_response:
                 data.append({'chr':res.chr, 'pos':res.pos, 'snp':res.snp, 'rsID':rsID, 'clst':res.clst,
-                             'ma':res.ma, 'maja':res.maja, 'maf':res.maf, 'mac':res.mac, 'nobs':res.nobs})
+                             'dataset':res.dataset, 'ma':res.ma, 'maja':res.maja, 'maf':res.maf, 'mac':res.mac,
+                             'nobs':res.nobs})
             return data
         else:
             return 403

@@ -2,8 +2,9 @@ from freq_api import db
 
 class rsID(db.Model):
     __tablename__= 'rsIDs'
-    chr_pos = db.Column(db.Text)
-    rsID = db.Column(db.Text, primary_key=True)
+    snp = db.Column(db.Text, index=True)
+    rsID = db.Column(db.Text, primary_key=True, index=True)
+    build = db.Column(db.Text)
 
 class Freq(db.Model):
     __tablename__= 'freqs'
@@ -11,6 +12,7 @@ class Freq(db.Model):
     pos = db.Column(db.Integer, index=True)
     snp = db.Column(db.Text, primary_key=True)
     clst = db.Column(db.Text, primary_key=True)
+    dataset = db.Column(db.Text)
     ma = db.Column(db.Text)
     maja = db.Column(db.Text)
     maf = db.Column(db.Float)

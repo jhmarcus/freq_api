@@ -1,11 +1,15 @@
 #!venv/bin/python
 import time
 import sqlite3
+import sys
 from freq_api import db,models
 
 t0 = time.time()
 
-reader = open('freq_api/static/data/1000genomes/1000genomes.chr22.phase3.frq.strat')
+data_file = sys.argv[1]
+dataset = sys.argv[2]
+
+reader = open(data_file)
 reader.readline()
 
 conn = sqlite3.connect('app.db')
@@ -24,8 +28,8 @@ for line in reader:
         maf = fields[5]
         mac = fields[6]
         nobs = fields[7]
-        c.execute('INSERT INTO freqs VALUES ({}, {}, "{}", "{}", "{}", "{}", {}, {}, {})'.format(chr, pos, snp,
-                                                                                                clst, a1, a2,
+        c.execute('INSERT INTO freqs VALUES ({}, {}, "{}", "{}", "{}", "{}", "{}", {}, {}, {})'.format(chr, pos, snp,
+                                                                                                clst, dataset, a1, a2,
                                                                                                 maf, mac, nobs))
 
         if i%100000 == 0:
