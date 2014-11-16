@@ -1,5 +1,3 @@
 venv/
 freq_api/static/
-app.db
-db_repository/
 *.pyc
