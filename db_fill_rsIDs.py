@@ -13,7 +13,7 @@ build = sys.argv[2]
 reader = gzip.open(data_file)
 reader.readline()
 
-conn = sqlite3.connect('app.db')
+conn = sqlite3.connect('freq_api/static/app.db')
 c = conn.cursor()
 
 i = 1

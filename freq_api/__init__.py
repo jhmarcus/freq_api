@@ -17,9 +17,9 @@ parser.add_argument('chr',type=int)
 parser.add_argument('pos',type=int)
 parser.add_argument('rsID',type=str)
 
-@app.route('/')
-def index():
-    return "API for accessing population frequency data from Novembre Lab."
+#@app.route('/')
+#def index():
+#    return "API for accessing population frequency data from Novembre Lab."
 
 class Freq(restful.Resource):
     '''
@@ -54,3 +54,6 @@ class Freq(restful.Resource):
             return 403
 
 api.add_resource(Freq,'/freq')
+
+if __name__ == '__main__':
+    app.run(debug = True)
