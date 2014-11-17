@@ -1,4 +1,5 @@
 from flask import Flask
+from flask import jsonify
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext import restful
 from flask.ext.restful import reqparse
@@ -39,10 +40,10 @@ class Freq(restful.Resource):
                 rsID = rsID.rsID
             for res in freq_response:
                 data.append({'chr':res.chr, 'pos':res.pos, 'snp':res.snp, 'rsID':rsID, 'clst':res.clst,
-                             'dataset':res.dataset, 'ma':res.ma, 'maja':res.maja, 'maf':res.maf, 'mac':res.mac,
+                             'dataset':res.dataset, 'minAllele':res.ma, 'majAllele':res.maja, 'maf':res.maf, 'mac':res.mac,
                              'nobs':res.nobs})
             data = utils.define_freqscale(data)
-            return data
+            return jsonify(results=data)
         elif args['rsID']:
             data = []
             rsID_response = models.rsID.query.filter_by(rsID=args['rsID'])
@@ -52,10 +53,10 @@ class Freq(restful.Resource):
             freq_response = models.Freq.query.filter_by(snp=snp)
             for res in freq_response:
                 data.append({'chr':res.chr, 'pos':res.pos, 'snp':res.snp, 'rsID':rsID, 'clst':res.clst,
-                             'dataset':res.dataset, 'ma':res.ma, 'maja':res.maja, 'maf':res.maf, 'mac':res.mac,
+                             'dataset':res.dataset, 'minAllele':res.ma, 'majAllele':res.maja, 'maf':res.maf, 'mac':res.mac,
                              'nobs':res.nobs})
             data = utils.define_freqscale(data)
-            return data
+            return jsonify(results=data)
         elif args['random']==True:
             data = []
             row_count = int(models.Freq.query.count())
@@ -72,7 +73,7 @@ class Freq(restful.Resource):
                              'dataset':res.dataset, 'minAllele':res.ma, 'majAllele':res.maja, 'maf':res.maf, 'mac':res.mac,
                              'nobs':res.nobs})
             data = utils.define_freqscale(data)
-            return data
+            return jsonify(results=data)
         else:
             return 403
 
