@@ -21,6 +21,11 @@ parser.add_argument('chr',type=int)
 parser.add_argument('pos',type=int)
 parser.add_argument('rsID',type=str)
 parser.add_argument('random', type=bool)
+parser.add_argument('dataset', type=str, required=True)
+
+dataset_to_bulid_dict = {
+                            '1000genomes_phase3':'GRCh37'
+                        }
 
 @app.route('/')
 def index():
@@ -33,8 +38,9 @@ class Freq(restful.Resource):
         args=parser.parse_args()
         if args['chr'] and args['pos']:
             data = []
-            freq_response = models.Freq.query.filter_by(chr=args['chr'], pos=args['pos'])
-            rsID_response = models.rsID.query.filter_by(snp=str(args['chr'])+':'+str(args['pos']))
+            build = dataset_to_bulid_dict[args['dataset']]
+            freq_response = models.Freq.query.filter_by(dataset=args['dataset'], chr=args['chr'], pos=args['pos'])
+            rsID_response = models.rsID.query.filter_by(build=build, snp=str(args['chr'])+':'+str(args['pos']))
             rsID = rsID_response.first()
             if rsID != None:
                 rsID = rsID.rsID
@@ -46,11 +52,12 @@ class Freq(restful.Resource):
             return jsonify(results=data)
         elif args['rsID']:
             data = []
-            rsID_response = models.rsID.query.filter_by(rsID=args['rsID'])
+            build = dataset_to_bulid_dict[args['dataset']]
+            rsID_response = models.rsID.query.filter_by(build=build, rsID=args['rsID'])
             rsID = rsID_response.first()
             snp = rsID.snp
             rsID = rsID.rsID
-            freq_response = models.Freq.query.filter_by(snp=snp)
+            freq_response = models.Freq.query.filter_by(dataset=args['dataset'], snp=snp)
             for res in freq_response:
                 data.append({'chr':res.chr, 'pos':res.pos, 'snp':res.snp, 'rsID':rsID, 'clst':res.clst,
                              'dataset':res.dataset, 'minAllele':res.ma, 'majAllele':res.maja, 'maf':res.maf, 'mac':res.mac,
@@ -59,12 +66,14 @@ class Freq(restful.Resource):
             return jsonify(results=data)
         elif args['random']==True:
             data = []
-            row_count = int(models.Freq.query.count())
-            random_row = models.Freq.query.offset(int(row_count*random.random())).first()
+            build = dataset_to_bulid_dict[args['dataset']]
+            #row_count = int(models.Freq.query.count())
+            row_count = 186697368
+            random_row = models.Freq.query.offset(random.randint(0, row_count - 1)).limit(1).first()
             chr = random_row.chr
             pos = random_row.pos
-            freq_response = models.Freq.query.filter_by(chr=chr, pos=pos)
-            rsID_response = models.rsID.query.filter_by(snp=str(chr)+':'+str(pos))
+            freq_response = models.Freq.query.filter_by(dataset=args['dataset'], chr=chr, pos=pos)
+            rsID_response = models.rsID.query.filter_by(build=build, snp=str(chr)+':'+str(pos))
             rsID = rsID_response.first()
             if rsID != None:
                 rsID = rsID.rsID
