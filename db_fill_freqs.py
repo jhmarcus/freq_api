@@ -20,18 +20,15 @@ i = 1
 for line in reader:
     fields = line.strip('\n').split()
     if fields[1].count(':') == 1 or fields[1][:2] == 'rs':
-        chr = fields[0]
-        pos = fields[1].split(':')[1]
-        snp = fields[1]
+        pos = fields[1]
         clst = fields[2]
         a1 = fields[3]
         a2 = fields[4]
         maf = fields[5]
         mac = fields[6]
         nobs = fields[7]
-        c.execute('INSERT INTO freqs VALUES ({}, {}, "{}", "{}", "{}", "{}", "{}", {}, {}, {})'.format(chr, pos, snp,
-                                                                                                clst, dataset, a1, a2,
-                                                                                                maf, mac, nobs))
+        c.execute('INSERT INTO freqs VALUES ("{}", "{}", "{}", "{}", "{}", {}, {}, {})'.format(pos, clst, dataset,
+                                                                                               a1, a2, maf, mac, nobs))
 
         if i%100000 == 0:
             print '{} rows parsed'.format(i)

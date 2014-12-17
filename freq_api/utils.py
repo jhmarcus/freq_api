@@ -24,3 +24,9 @@ def define_freqscale(json_data):
             json_data[i]['freqScale']=1
 
     return json_data
+
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
