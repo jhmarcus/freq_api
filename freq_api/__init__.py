@@ -1,5 +1,3 @@
-# still in the works
-
 from flask import Flask
 from flask import jsonify
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -10,14 +8,15 @@ from sqlalchemy.sql.expression import func, select, exists
 from freq_api import utils
 import sqlite3
 import random
+import time
 
 app = Flask(__name__)
 app.config.from_object('config')
-# db = SQLAlchemy(app)
+db = SQLAlchemy(app)
 api = restful.Api(app)
 api.decorators=[cors.crossdomain(origin='*')]
 
-# from freq_api import models
+from freq_api import models
 
 parser = reqparse.RequestParser()
 parser.add_argument('pos',type=str)
@@ -38,7 +37,7 @@ class Freq(restful.Resource):
     '''
     def get(self):
         args=parser.parse_args()
-        conn = sqlite3.connect('freq_api/static/app.db')
+        conn = sqlite3.connect('/var/www/freq_api/freq_api/static/app.db')
         conn.row_factory = utils.dict_factory
         c = conn.cursor()
 
@@ -47,21 +46,26 @@ class Freq(restful.Resource):
             pos = args['pos']
             dataset = args['dataset']
             build = dataset_to_build_dict[dataset]
+
             t = (pos, )
             rsID_res = c.execute('SELECT * FROM rsIDs WHERE pos=?', t).fetchone()
             if rsID_res:
                 rsID = rsID_res['rsID']
             else:
                 rsID = 'NA'
+
             t = (dataset,)
             coords_res = c.execute('SELECT * FROM coordinates WHERE dataset=?', t).fetchall()
             coords = {}
             for row in coords_res:
                 coords[row['clst']] = [row['lon'], row['lat']]
+
             t = (dataset, pos,)
-            for row in c.execute('SELECT * FROM freqs WHERE dataset=? AND pos=?', t):
-                data.append({'pos':row['pos'], 'rsID':rsID, 'clst':row['clst'], 'dataset':dataset, 'coordinates':coords[row['clst']],
-                             'minAllele':row['ma'], 'majAllele':row['maja'], 'maf':row['maf'], 'mac':row['mac'], 'nobs':row['nobs']})
+            for row in c.execute('SELECT * FROM freqs WHERE dataset=? AND pos=? LIMIT 26', t):
+                clst = row['clst']
+                data.append({'pos':row['pos'], 'rsID':rsID, 'clst':clst, 'dataset':dataset,
+                             'coordinates':coords[clst], 'minAllele':row['ma'], 'majAllele':row['maja'],
+                             'maf':row['maf'], 'mac':row['mac'], 'nobs':row['nobs']})
 
             data = utils.define_freqscale(data)
             conn.close()
@@ -70,18 +74,23 @@ class Freq(restful.Resource):
             data = []
             rsID = args['rsID']
             dataset = args['dataset']
+
             t = (rsID,)
             rsID_res = c.execute('SELECT * FROM rsIDs WHERE rsID=?', t).fetchone()
             pos = rsID_res['pos']
+
             t = (dataset,)
             coords_res = c.execute('SELECT * FROM coordinates WHERE dataset=?', t).fetchall()
             coords = {}
             for row in coords_res:
                 coords[row['clst']] = [row['lon'], row['lat']]
+
             t = (dataset, pos,)
-            for row in c.execute('SELECT * FROM freqs WHERE dataset=? AND pos=?', t):
-                data.append({'pos':row['pos'], 'rsID':rsID, 'clst':row['clst'], 'dataset':dataset, 'coordinates':coords[row['clst']],
-                             'minAllele':row['ma'], 'majAllele':row['maja'], 'maf':row['maf'], 'mac':row['mac'], 'nobs':row['nobs']})
+            for row in c.execute('SELECT * FROM freqs WHERE dataset=? AND pos=? LIMIT 26', t):
+                clst = row['clst']
+                data.append({'pos':row['pos'], 'rsID':rsID, 'clst':clst, 'dataset':dataset,
+                             'coordinates':coords[clst], 'minAllele':row['ma'], 'majAllele':row['maja'],
+                             'maf':row['maf'], 'mac':row['mac'], 'nobs':row['nobs']})
 
             data = utils.define_freqscale(data)
             conn.close()

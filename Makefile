@@ -28,6 +28,9 @@ snp:
 snp2:
 	curl "http://127.0.0.1:5000/freq?dataset=1000genomes_phase3&pos=1:752566"
 
+snp3: 
+	curl "http://127.0.0.1:5000/freq?dataset=1000genomes_phase3&pos=22:16050607" 
+
 rsID:
 	curl "http://127.0.0.1:5000/freq?dataset=1000genomes_phase3&rsID=rs1056"
 
@@ -124,3 +127,8 @@ random:
 1000genomes_chr22:
 	./db_fill_freqs.py freq_api/static/data/1000genomes/1000genomes.chr22.phase3.frq.strat.gz 1000genomes_phase3 
 	./db_fill_rsIDs.py freq_api/static/data/rsIDs/GRCh37/bed_chr_22.bed.gz GRCh37  
+
+22:
+	./db_fill_freqs.py freq_api/static/data/1000genomes/1000genomes.chr22.phase3.frq.strat.gz 1000genomes_phase3 
+	./db_fill_rsIDs.py freq_api/static/data/rsIDs/GRCh37/bed_chr_22.bed.gz GRCh37  
+	./db_fill_coordinates.py freq_api/static/data/1000genomes/1000genomes_phase3_coordinates.txt 1000genomes_phase3

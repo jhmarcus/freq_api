@@ -3,7 +3,6 @@ import time
 import sqlite3
 import sys
 import gzip
-from freq_api import db,models
 
 t0 = time.time()
 
@@ -29,7 +28,6 @@ for line in reader:
         nobs = fields[7]
         c.execute('INSERT INTO freqs VALUES ("{}", "{}", "{}", "{}", "{}", {}, {}, {})'.format(pos, clst, dataset,
                                                                                                a1, a2, maf, mac, nobs))
-
         if i%100000 == 0:
             print '{} rows parsed'.format(i)
         i+=1

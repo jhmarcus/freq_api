@@ -3,7 +3,6 @@ import time
 import gzip
 import sqlite3
 import sys
-from freq_api import db,models
 
 t0 = time.time()
 
