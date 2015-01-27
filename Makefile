@@ -31,8 +31,14 @@ snp2:
 snp3: 
 	curl "http://127.0.0.1:5000/freq?dataset=1000genomes_phase3&pos=22:16050607" 
 
+snp4:
+	curl "http://127.0.0.1:5000/freq?dataset=1000genomes_phase3&pos=22:27569979"
+
 rsID:
 	curl "http://127.0.0.1:5000/freq?dataset=1000genomes_phase3&rsID=rs1056"
+
+rsID2:
+	curl "http://127.0.0.1:5000/freq?dataset=1000genomes_phase3&rsID=rs587776127"
 
 random:
 	curl "http://127.0.0.1:5000/freq?dataset=1000genomes_phase3&random=True"

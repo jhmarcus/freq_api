@@ -1,3 +1,13 @@
+from flask import jsonify
+
+def dict_factory(cursor, row):
+    '''
+    '''
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
 def define_freqscale(json_data):
     '''
     helper function to add freqscale to json
@@ -25,8 +35,47 @@ def define_freqscale(json_data):
 
     return json_data
 
-def dict_factory(cursor, row):
-    d = {}
-    for idx, col in enumerate(cursor.description):
-        d[col[0]] = row[idx]
-    return d
+def query_by_pos(c, dataset, pos, build):
+    '''
+    '''
+    data = []
+    rsID_res = c.execute('SELECT * FROM rsIDs WHERE pos=?', (pos,)).fetchone()
+    if rsID_res:
+        rsID = rsID_res['rsID']
+    else:
+        rsID = 'NA'
+
+    coords_res = c.execute('SELECT * FROM coordinates WHERE dataset=?', (dataset,)).fetchall()
+    coords = {}
+    for row in coords_res:
+        coords[row['clst']] = [row['lon'], row['lat']]
+
+    for row in c.execute('SELECT * FROM freqs WHERE dataset=? AND pos=?', (dataset, pos,)):
+        clst = row['clst']
+        data.append({'pos':row['pos'], 'rsID':rsID, 'clst':clst, 'dataset':dataset,
+                     'coordinates':coords[clst], 'minAllele':row['ma'], 'majAllele':row['maja'],
+                     'maf':row['maf'], 'mac':row['mac'], 'nobs':row['nobs']})
+
+    data = define_freqscale(data)
+    return jsonify(results=data)
+
+def query_by_rsID(c, dataset, rsID, build):
+    '''
+    '''
+    data = []
+    rsID_res = c.execute('SELECT * FROM rsIDs WHERE rsID=?', (rsID,)).fetchone()
+    pos = rsID_res['pos']
+
+    coords_res = c.execute('SELECT * FROM coordinates WHERE dataset=?', (dataset,)).fetchall()
+    coords = {}
+    for row in coords_res:
+        coords[row['clst']] = [row['lon'], row['lat']]
+
+    for row in c.execute('SELECT * FROM freqs WHERE dataset=? AND pos=?', (dataset, pos,)):
+        clst = row['clst']
+        data.append({'pos':row['pos'], 'rsID':rsID, 'clst':clst, 'dataset':dataset,
+                     'coordinates':coords[clst], 'minAllele':row['ma'], 'majAllele':row['maja'],
+                     'maf':row['maf'], 'mac':row['mac'], 'nobs':row['nobs']})
+
+    data = define_freqscale(data)
+    return jsonify(results=data)
