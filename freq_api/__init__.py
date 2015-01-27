@@ -3,10 +3,9 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext import restful
 from flask.ext.restful import reqparse
 from flask.ext.restful.utils import cors
-from sqlalchemy.sql.expression import func, select, exists
-from freq_api import utils
 import sqlite3
 import random
+from freq_api import utils
 
 app = Flask(__name__)
 app.config.from_object('config')
