@@ -43,6 +43,10 @@ rsID2:
 random:
 	curl "http://127.0.0.1:5000/freq?dataset=1000genomes_phase3&random=True"
 
+fill_rsIDs:
+	./db_fill_rsIDs.py freq_api/static/data/rsIDs/hg18/snp130.txt.gz hg18
+	./db_fill_rsIDs.py freq_api/static/data/rsIDs/hg19/snp141.txt.gz hg19
+
 1000genomes: 1000genomes_chr1 1000genomes_chr2 1000genomes_chr3 1000genomes_chr4 1000genomes_chr5 1000genomes_chr6 1000genomes_chr7 1000genomes_chr8 1000genomes_chr9 1000genomes_chr10 1000genomes_chr11 1000genomes_chr12 1000genomes_chr13 1000genomes_chr14 1000genomes_chr15 1000genomes_chr16 1000genomes_chr17 1000genomes_chr18 1000genomes_chr19 1000genomes_chr20  1000genomes_chr21 1000genomes_chr22     
 	./db_fill_coordinates.py freq_api/static/data/1000genomes/1000genomes_phase3_coordinates.txt 1000genomes_phase3
 
